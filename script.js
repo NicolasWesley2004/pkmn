@@ -1,19 +1,66 @@
-const pokemonName = document.querySelector('.pokemon_name')
-const pokemonNumber = document.querySelector('.pokemon_number')
-const pokemonImage = document.querySelector('.pokemon_image')
+const pokemonName = document.querySelector(".pokemon_name");
+const pokemonNumber = document.querySelector(".pokemon_number");
+const pokemonImage = document.querySelector(".pokemon_image");
+
+const form = document.querySelector(".form");
+const input = document.querySelector(".input_search");
+const buttonPrev = document.querySelector(".btn-prev");
+const buttonNext = document.querySelector(".btn-next");
+
+let searchPokemon = 1;
 
 const fetchPokemon = async (pokemon) => {
-    const APIResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`);
+  const APIResponse = await fetch(
+    `https://pokeapi.co/api/v2/pokemon/${pokemon}`
+  );
+
+  if (APIResponse.status == 200) {
     const data = await APIResponse.json();
     return data;
-}
+  }
+};
 
 const renderPokemon = async (pokemon) => {
-    const data = await fetchPokemon(pokemon);   
+  pokemonName.innerHTML = "Loading...";
 
+  const data = await fetchPokemon(pokemon);
+
+  if (data) {
+    pokemonImage.style.display = "block";
     pokemonName.innerHTML = data.name;
     pokemonNumber.innerHTML = data.id;
-    pokemonImage.src = data['sprites']['versions']['generation-v']['black-white']['animated']['front-default'];
-}
 
-renderPokemon('6');
+    // Verificar se existe a imagem animada
+    const animatedSprite =
+      data.sprites["versions"]["generation-v"]["black-white"]["animated"][
+        "front-default"
+      ];
+
+    if (animatedSprite) {
+      // Se houver uma imagem animada, usar ela
+      pokemonImage.src = animatedSprite;
+    } else {
+      // Caso não haja imagem animada, usa a imagem estática
+      pokemonImage.src = data.sprites["front_default"];
+    }
+
+    input.value = "";
+  } else {
+    pokemonImage.style.display = "none";
+    pokemonName.innerHTML = "not found :(";
+    pokemonNumber.innerHTML = "";
+  }
+};
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  renderPokemon(input.value.toLowerCase());
+});
+
+buttonPrev.addEventListener("click", () => {
+  alert("prev clicked");
+});
+
+buttonNext.addEventListener("click", () => {
+  alert("next clicked");
+});
