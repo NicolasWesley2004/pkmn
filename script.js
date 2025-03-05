@@ -30,21 +30,19 @@ const renderPokemon = async (pokemon) => {
     pokemonName.innerHTML = data.name;
     pokemonNumber.innerHTML = data.id;
 
-    // Verificar se existe a imagem animada
     const animatedSprite =
       data.sprites["versions"]["generation-v"]["black-white"]["animated"][
         "front-default"
       ];
 
     if (animatedSprite) {
-      // Se houver uma imagem animada, usar ela
       pokemonImage.src = animatedSprite;
     } else {
-      // Caso não haja imagem animada, usa a imagem estática
       pokemonImage.src = data.sprites["front_default"];
     }
 
     input.value = "";
+    searchPokemon = data.id;
   } else {
     pokemonImage.style.display = "none";
     pokemonName.innerHTML = "not found :(";
@@ -58,9 +56,13 @@ form.addEventListener("submit", (event) => {
 });
 
 buttonPrev.addEventListener("click", () => {
-  alert("prev clicked");
+  if (searchPokemon > 1) {
+    searchPokemon -= 1;
+    renderPokemon(searchPokemon);
+  }
 });
 
 buttonNext.addEventListener("click", () => {
-  alert("next clicked");
+  searchPokemon += 1;
+  renderPokemon(searchPokemon);
 });
